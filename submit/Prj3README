@@ -1,0 +1,13 @@
+Submitted Files List:
+
+Prj3README: This document.
+Project3_Report_陈曦仑_5090309272_.pdf: Project report.
+testRes.txt: Test runs.
+cse356header.h: Common header file.
+makefile: The makefile.
+BasicDisk.c: Basic Disk Server in Problem 1.
+IntelliDisk.c: Intelligent Disk Server in Problem 2.
+cmdClient.c: Command-line disk client for problem 1 and 2.
+randomClient.c: random data disk client for problem 1 and 2.
+FileServer.cpp: File Server in Problem 3.
+FileClient.c: Command-line file server client for problem 3.

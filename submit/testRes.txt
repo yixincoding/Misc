@@ -1,0 +1,198 @@
+########## Problem 1:
+### Parameter syntax:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./BDS
+Usage: BDS <DiskFileName> <#cylinder/track> <#sector> <track-to-track delay> <port>
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./BDS disk.tmp 100 100 100 10000
+Server running.
+
+### Sample run, using command-line client:
+## Results of server:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./BDS disk.bin 100 100 100 10000
+Server running.
+Command received: i
+Command received: w 10 10 5 abcde
+Command received: r 10 10
+Command received: w 0 0 9 chenxilun
+Command received: r 0 0
+Command received: terminate
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+
+## Results of client:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./BDC localhost 10000
+Client >i
+100 100
+Client >w 10 10 5 abcde 
+1
+Client >r 10 10
+1abcde
+Client >w 0 0 9 chenxilun       
+1
+Client >r 0 0
+1chenxilun
+Client >terminate
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+
+########## Problem 2:
+Since this problem is mainly focused on performance comparison of different scheduling algorithms, which are discussed at length in the project report.
+Here we just list a few sample runs to show that how the program works.
+More test runs can be found in the project report.
+
+### Parameter syntax:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./IDS
+IDS <DiskFileName> <#cylinder/track> <#sector> <track-to-track delay> <port> <RequestQueueLength> <SchedulingAlgorithm>
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./IDS disk.bin 100 100 100 10001 10 2
+Server running.
+
+### Sample run:(Since the commands contains a large amount of random-generated data, we do not list the received commands here)
+## Server:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./IDS disk.bin 100 100 100 10001 10 2
+Server running.
+##### Received commands omitted.
+
+## Client:
+phoenix@phoenix-PC:~/cs356/Project3/src$ time ./randomBDC localhost 10001 200 1
+RRWWWRWRRWRWRWWWRWWRRRWRRRRRRRRWWWWWWWRWWRWRWWRWWWWRRRRRWWRRWRWWWRWWRRRRWWRWWRWWRWRWWRWWWRWRWRWWRRWWWRWWWWRRRRRRRRWRWRWWWWRRRRRRWWRWWRRRWRWWRRRWRRWWWRWWWRWWWRRWRRWRRRWWRRWWWRWWWRWWWRRRRWWRWWWWWWRWRWWWR
+
+real	0m0.365s
+user	0m0.004s
+sys	0m0.012s
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+
+########## Problem 3:
+### Parameter syntax:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./FS
+Usage: FS <DiskServerAddress> <BDSPort> <FSPort>
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./FS localhost 10000 10001
+File server running.
+
+### Sample run:
+## File client results:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./FC localhost 10001
+Client >l
+Client >c file1
+0
+Client >w file1 9 chenxilun
+0
+Client >r file1
+0 9 chenxilun
+Client >l 1
+file1 9
+Client >c file2
+0
+Client >a file1 10 5090309272
+0
+Client >a file2 8 Project3
+0
+Client >r file2 
+0 8 Project3
+Client >r file1
+0 19 chenxilun5090309272
+Client >l 0
+file1
+file2
+Client >terminate
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+## File server results:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./FS localhost 10000 10001
+Unknown format! Will automatically format the file system.
+File server running.
+Command received: l
+Command received: c file1
+Command received: w file1 9 chenxilun
+Command received: r file1
+Command received: l 1
+Command received: c file2
+Command received: a file1 10 5090309272
+Command received: a file2 8 Project3
+Command received: r file2
+Command received: r file1
+Command received: l 0
+Command received: terminate
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+## Disk server results:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./BDS disk.bin 10 10 100 10000
+Server running.
+Command received: I
+Command received: R 0 0
+Command received: W 0 0 256 tffvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvviiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+Command received: W 0 1 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+Command received: W 0 2 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+Command received: R 0 0
+Command received: W 0 3 256 file1
+Command received: W 0 0 256 tffdnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Command received: W 0 4 9 chenxilun
+Command received: W 0 3 256 file1
+Command received: W 0 0 256 tffdnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Command received: W 0 1 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+Command received: W 0 2 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+Command received: R 0 4
+Command received: W 0 5 256 file2
+Command received: W 0 0 256 tffdndnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Command received: R 0 4
+Command received: W 0 4 19 chenxilun5090309272
+Command received: W 0 3 256 file1
+Command received: R 0 6
+Command received: W 0 6 8 Project31
+Command received: W 0 5 256 file2
+Command received: R 0 6
+Command received: R 0 4
+
+
+### Sample run: Multi-block big file
+## File Client:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./FC localhost 10001
+Client >l
+Client >c bigfile
+0
+Client >w bigfile 1000 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+0
+Client >l 1
+bigfile 1000
+Client >r bigfile
+0 1000 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Client >f
+Client >l 0
+Client >terminate
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+## File Server:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./FS localhost 10000 10001
+File server running.
+Command received: l
+Command received: c bigfile
+Command received: w bigfile 1000 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Command received: l 1
+Command received: r bigfile
+Command received: f
+Command received: l 0
+Command received: terminate
+phoenix@phoenix-PC:~/cs356/Project3/src$ 
+
+## Disk Server:
+phoenix@phoenix-PC:~/cs356/Project3/src$ ./BDS disk.bin 10 10 100 10000
+Server running.
+Command received: I
+Command received: R 0 0
+Command received: W 0 3 256 bigfile
+Command received: W 0 0 256 tffdnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Command received: W 0 4 256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaG
+Command received: W 0 5 256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaG
+Command received: W 0 6 256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaG
+Command received: W 0 7 232 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Command received: W 0 3 256 bigfile
+Command received: W 0 0 256 tffdnnnnvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Command received: W 0 1 256 ����������������
+Command received: W 0 2 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+Command received: R 0 4
+Command received: R 0 5
+Command received: R 0 6
+Command received: R 0 7
+Command received: W 0 0 256 tffvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvviiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+Command received: W 0 1 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+Command received: W 0 2 256 ����������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+
